@@ -42,7 +42,7 @@ This repository is perfect for:
 
 1. Clone the repository to your local system:
    ```bash
-   git clone https://github.com/<your-username>/cisco-packet-tracer-commands.git
+   git clone https://github.com/Kaushal1045/FCN.git
 2. Open the .txt files using any text editor to explore the commands.
 3. Practice these commands in Cisco Packet Tracer or a real Cisco lab environment.
 
