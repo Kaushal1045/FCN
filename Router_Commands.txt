@@ -1,0 +1,148 @@
+
+Router and Networking Concepts
+
+1. To Connect Any Two Networks:
+   - We need routers to connect different networks.
+
+Router:
+   - A router is a networking device used to connect two different networks.
+
+Golden Rules:
+   1. No two interfaces of a single router will belong to the same network.
+   2. The opposite ends of two different routers connected via a single link should always be part of the same network.
+
+2. Switch:
+   - A switch is used within a network to connect devices, whereas a router connects different networks.
+
+3. Static Routing:
+   - Static routing involves providing the network address of a network to a router where the router is not directly connected.
+
+Commands:
+
+   To Assign an IP Address to a Router Interface (NIC):
+   ```
+   R1(Config)# interface FastEthernet 0/0
+   R1(Config-if)# ip address <IP address> <Subnet mask>
+   R1(Config-if)# no shutdown
+   ```
+
+   To Configure Static Routing:
+   ```
+   R1(Config)# ip route <destination address> <destination subnet mask> <next hop address>
+   R1(Config)# do wr
+   ```
+
+   Example: To connect R1 to the 30.0.0.0 network with subnet mask 255.255.255.0, which is not directly connected:
+   ```
+   R1(Config)# ip route 30.0.0.0 255.255.255.0 20.0.0.2
+   ```
+
+   To Check the Routing Table:
+   ```
+   R1# sh ip route
+   ```
+
+4. RIP Routing:
+   - RIP routing configures the router to advertise the networks to which it is connected.
+
+   To Assign an IP Address to a Router Interface (NIC):
+   ```
+   R1(Config)# interface FastEthernet 0/0
+   R1(Config-if)# ip address <IP address> <Subnet mask>
+   R1(Config-if)# no shutdown
+   ```
+
+   To Enable RIP Routing:
+   ```
+   R1(Config)# router rip
+   R1(Config)# network <network address>
+   R1(Config)# do wr
+   ```
+
+   To Check the Routing Table:
+   ```
+   R1# sh ip route
+   ```
+
+5. RIP Version 2:
+   - Configuration for RIP Version 2 is similar to RIP, but with some additional features.
+
+   To Enable RIP Version 2:
+   ```
+   R1(Config)# router rip
+   R1(Config-router)# version 2
+   R1(Config-router)# no auto-summary
+   R1(Config-router)# network <network address>
+   R1(Config-router)# do wr
+   ```
+
+   To Check the Routing Table:
+   ```
+   R1# sh ip route
+   ```
+
+6. Physical Switch/Router Connecting to PC:
+
+   Physical Switch --> Connect via Console --> USB to PC --> Device Manager (COM ports) --> Typically COM3
+   Tool to Connect: PUTTY (terminal emulator, protocol SSH, port 22)
+   - Select Serial
+   - Select the appropriate COM port (e.g., COM3)
+   - Click OK
+
+7. EIGRP (Enhanced Interior Gateway Routing Protocol):
+
+   To Assign an IP Address to a Router Interface (NIC):
+   ```
+   R1(Config)# interface FastEthernet 0/0
+   R1(Config-if)# ip address <IP address> <Subnet mask>
+   R1(Config-if)# no shutdown
+   ```
+
+   To Configure EIGRP:
+   ```
+   R1(Config)# router eigrp <Process ID>
+   R1(Config-router)# no auto-summary
+   R1(Config-router)# network <network address> <subnet mask>
+   R1(Config-router)# do wr
+   ```
+
+   To Check EIGRP Neighbors:
+   ```
+   R1# sh ip eigrp neighbors
+   ```
+
+   To Check EIGRP Topology:
+   ```
+   R1# sh ip eigrp topology
+   ```
+
+   To Check Bandwidth and Latency:
+   ```
+   R1# sh interfaces fastethernet 0/0
+   ```
+
+8. OSPF (Open Shortest Path First):
+   - Wildcard Mask is the inverse of the Subnet Mask. 
+   - Example: If subnet mask is 255.255.255.0, wildcard mask is 0.0.0.255.
+
+   To Assign an IP Address to a Router Interface (NIC):
+   ```
+   R1(Config)# interface FastEthernet 0/0
+   R1(Config-if)# ip address <IP address> <Subnet mask>
+   R1(Config-if)# no shutdown
+   ```
+
+   To Create Virtual Interfaces:
+   ```
+   R1(Config)# interface loopback 0
+   R1(Config-router)# ip address <IP address> 255.255.255.255
+   ```
+
+   To Configure OSPF:
+   ```
+   R1(Config)# router ospf <process ID>
+   R1(Config-router)# network <network address> <wildcard mask> <area>
+   R1(Config-router)# network <network address> <wildcard mask> <area>
+   R1(Config-router)# do wr
+   ```
+

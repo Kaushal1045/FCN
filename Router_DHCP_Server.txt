@@ -1,0 +1,22 @@
+DHCP Services:
+
+   Laptop --> Switch --> DHCP Server
+
+   DHCP Configuration:
+   - Pool name: cdac
+   - Default gateway: IP of the router to which the device is connected.
+   - DNS Server: You can use Google's DNS (8.8.8.8) or your own DNS server IP.
+
+   To Set Up the Router as a DHCP Server:
+
+   ```
+   Router(Config)# hostname DHCP
+   DHCP(Config)# interface fastethernet 0/0
+   DHCP(Config-if)# ip address <IP of router end to be connected to device> <Subnet>
+   DHCP(Config-if)# no shutdown
+   DHCP(Config-if)# ip dhcp pool <pool name>
+   DHCP(Config-if)# network <network address> <subnet>
+   DHCP(Config-if)# dns-server <dns server IP address>
+   DHCP(Config-if)# default-router <router IP>
+   DHCP# show ip dhcp pool
+   ```
