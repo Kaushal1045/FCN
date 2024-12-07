@@ -1,0 +1,44 @@
+IP Addressing and Subnetting Concepts
+
+1. If You Have Different DNS, Web, and Email Servers:
+   - In the DNS server, specify the URL/Domain of the web and email servers, along with their respective IP addresses. 
+   - For example:
+     - DNS Server: web.example.com → IP Address of the Web Server: 192.168.1.10
+     - DNS Server: mail.example.com → IP Address of the Email Server: 192.168.1.20
+
+2. If Given IP Address is 10.10.10.10/24:
+   - This is a classless IP address. This means we can assign any address to hosts within this subnet, but we will calculate based on the subnet mask.
+   - The subnet mask is /24, meaning there are 24 network bits and 8 host bits:
+     - Host bits = 8 (because there are 8 bits left for hosts)
+     - Usable Hosts = 2^8 - 2 = 254 usable IP addresses.
+     - Block Size = 256 (this is the total number of IP addresses in the block, including the network address and broadcast address).
+
+3. If Given IP Address is 10.10.10.10 (without Subnet Mask):
+   - This is a classful IP address, and the class is determined based on the IP address range:
+     - 10.10.10.10 falls in the Class A range (10.0.0.0 - 10.255.255.255).
+     - The default subnet mask for Class A is /8, meaning 8 network bits and 24 host bits.
+   - In this case, the network class decides the default subnet mask, and you will solve subnetting problems based on that.
+
+4. How to Find the Subnet Mask Based on the Number of Hosts:
+   - If you know the required number of hosts, you can determine the subnet mask.
+   - For example, if you need to accommodate 2 hosts:
+     - Total Hosts = 2 + 2 (Network Address + Broadcast Address) = 4
+     - To find the required number of host bits:
+       - 2^? = 4 → ? = 2 (you need 2 host bits).
+     - Host Bits = 2
+     - Network Bits = 32 - 2 = 30 (The network has 30 bits).
+     - The Subnet Mask will be /30 because there are 30 network bits.
+
+   Definitions:
+   - Network Address (NA): This is assigned to the network itself, not to any device, host, or server. The first address in the subnet.
+   - Broadcast Address (BA): This is reserved for sending messages to all devices within the network or subnet. It is used for services like ARP (Address Resolution Protocol), DHCP, or other discovery protocols. The last address in the subnet.
+   - Usable Range (UR): This is the range of IP addresses between the Network Address (NA) and the Broadcast Address (BA). These addresses are assigned to devices, hosts, or servers.
+
+5. How to Calculate the Block Size:
+   - To calculate the block size of a network:
+     - Subtract the subnet mask from 32 to get the number of host bits.
+     - Then calculate the block size:  
+       2^host bits = block size.
+     - For example, if the subnet mask is /24:
+       - Host bits = 32 - 24 = 8.
+       - Block size = 2^8 = 256 (total addresses in the subnet).
