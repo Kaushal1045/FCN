@@ -1,0 +1,83 @@
+Cisco Packet Tracer Basic Commands
+
+General Commands:
+
+1. To Get IP Address and Other Configurations:
+   en>ipconfig
+
+2. To Check Network Interface Card (NIC) Connectivity:
+   en>ping <Destination IP Address>
+   
+   Ping (Packet Internet Groper) is a method to determine communication latency between two devices or networks. 
+   It measures the time it takes for data to travel between two points. Lower latency means better communication efficiency.
+
+3. To Trace the Path of Packet Transfer:
+   en>tracert <Destination IP Address>
+
+4. To Get the IP Address of Any Website via CMD:
+   en>nslookup <Website>
+
+5. To Cancel Any Command on Cisco CLI:
+   Use `no` as a prefix to the command you want to cancel. 
+   Example:
+   R1#no <command>
+
+
+Switch Modes and Commands:
+
+Switch CLI Levels:
+1. Level 1 (User EXEC Mode):
+   switch>
+2. Level 2 (Privileged EXEC Mode):
+   Switch#
+3. Level 3 (Global Configuration Mode):
+   Switch(config)#
+
+Basic Commands:
+1. To get command suggestions:
+   Switch>?
+2. To enter enable mode:
+   Switch>en
+3. To enter configuration mode:
+   Switch#config
+4. To exit the current mode and go 1 level down:
+   Switch(config)#exit
+5. To show the switch version:
+   Switch>sh/show version
+
+Connecting Laptop to Switch:
+You can connect a Laptop (RS232) to the Switch (Console) through a console cable to operate the switch from the laptop.
+
+To Setup Password (for Enable Mode):
+1. Enter the following commands:
+   Switch(config)# enable password <password>
+   Switch(config)# exit
+   Switch#exit
+   Switch>enable
+
+To Change Hostname:
+1. Enter the following command:
+   Switch(config)#hostname <hostname>
+
+To Save Commands to Startup Configuration:
+1. Use one of the following commands:
+   Switch#copy running-config startup-config
+   OR
+   Switch#do wr
+
+To Save Password for Level 0:
+1. Configure the username and password:
+   R1(config)#username <username> privilege 0 password <password>
+2. Configure console login:
+   R1(config)#line console 0
+   R1(config)#login local
+3. Set enable mode password:
+   R1(config)#enable password <password>
+
+To Save Password for Console Port (Level 1):
+1. Enter the following commands:
+   Switch(config)#line console 0
+   Switch(config-line)#password <password>
+   Switch(config-line)#login local
+2. Exit to Privileged EXEC Mode (Level 2) and save the configuration:
+   Switch#do wr
