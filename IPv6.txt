@@ -1,0 +1,40 @@
+IPv6: 
+
+	Commands: To enable IPv6 routing 
+
+		1. R1(config)#ipv6 unicast-routing  ------> do this for all routers
+		2. R2(config)#ipv6 unicast-routing
+
+		To assign IPv6 address to interface 
+
+		R1(config)# interface fastethernet 0/1 ----> interface to assign ipv6
+		R1(config)# ipv6 address 202::1/64
+		R1(config-if)#no shutdwon
+
+		DO THIS FOR ALL INTERFACEES OF EACH AND EVERY ROUTERS
+
+	Commands: For Static routing on IPv6 
+
+		R1(config)# ipv6 route 2030::/64 2020::2 ----> 2030::/64 is missing network and 2020::2 is next hop
+
+		DO THIS FOR ALL MISSING ADDRESS FOR ALL ROUTERS 
+
+		TO CHECK IPv6 ROUTE
+
+		R1# sh ipv6 route ----> to check routing table
+
+	Commands: For RIP routing on IPv6
+
+		***Here no need to give network specially ....it will learn on its own
+
+		R1(config)# ipv6 router rip ripng ----> ripng -rip next generation----> we can give any word here
+		R1(config)#exit
+
+		To enable RIP on particular interface 
+		
+		R1(config)#interface fastethernet 0/1
+		R1(config-if)# ipv6 rip ripng enable 
+
+		DO THIS ON ALL INTERFACES OF ALL ROUTERS
+
+		R1#sh ipv6 route (Here u will observe that it will automatically learn about other networks by rip)
