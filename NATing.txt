@@ -1,0 +1,75 @@
+STATIC NATing: One private IP is assigned one public IP.
+
+1. Assign Interface as inside and outside local—> On NAT Router:
+
+   RNAT(config)# interface fastethernet 0/0  ---> Interface towards the client side
+   RNAT(config-if)# ip nat inside
+   RNAT(config)# interface fastethernet 0/1  ---> Interface towards server side
+   RNAT(config-if)# ip nat outside
+
+2. To assign a public IP to a private IP device:
+
+   RNAT(config)# ip nat inside source static 192.168.40.42 196.1.1.100  ---> Here, 192.168.40.42 is PC1's private IP, and 196.1.1.100 (from the global outside network range) is being assigned to that private IP.
+
+   RNAT(config)# ip nat inside source static 192.168.40.43 196.1.1.101  ---> For PC2's IP.
+
+   RNAT(config)# ip nat inside source static 192.168.40.44 196.1.1.102  ---> For PC3's IP.
+
+   *** Check NAT translations with:
+      RNAT# show ip nat translations
+      RNAT# show ip nat statistics
+
+   *** To remove static NAT entries, use "no" in front of the commands:
+      RNAT(config)# no ip nat inside source static 192.168.40.42 196.1.1.100
+
+---
+
+DYNAMIC NATing: Private IPs are given a pool of public IPs from which one is assigned to them. After the task is complete, the device returns the public IP to the pool.
+
+1. Assign Interface as inside and outside global on NAT Router:
+
+   RNAT(config)# interface fastethernet 0/0  ---> Interface towards the client side
+   RNAT(config-if)# ip nat inside
+   RNAT(config)# interface fastethernet 0/1  ---> Interface towards server side
+   RNAT(config-if)# ip nat outside
+
+2. Create Pool for Dynamic NAT:
+
+   RNAT(config)# ip nat pool cdac 196.1.1.2 196.1.1.20 netmask 255.255.255.0  ---> IP range 196.1.1.2 to 196.1.1.20 is the pool named CDAC. You can use any name for the pool.
+
+3. Permit access list—> Router will only assign public IPs to clients in this access list:
+
+   RNAT(config)# access-list 10 permit 192.168.40.0 0.0.7.255  ---> 192.168.40.0 is the client-side network address, and 0.0.7.255 is the wildcard mask.
+
+4. After creating the pool, assign the pool to the router:
+
+   RNAT(config)# ip nat inside source list 10 pool cdac
+
+   *** First, ping from PC to server (end-to-end) and then check the public IP assignment using:
+      RNAT# show ip nat translations
+      RNAT# show ip nat statistics
+
+---
+
+PAT: Here, port numbers are assigned to each device, and all devices from the same network are given one private IP address along with their port numbers (1-65000). For example: 196.1.16:45001. 
+
+PAT (Port Address Translation) is also called overloading, where multiple private IP addresses exit via the same public IP address.
+
+1. Assign Interface as inside and outside global on NAT Router:
+
+   RNAT(config)# interface fastethernet 0/0  ---> Interface towards the client side
+   RNAT(config-if)# ip nat inside
+   RNAT(config)# interface fastethernet 0/1  ---> Interface towards server side
+   RNAT(config-if)# ip nat outside
+
+2. Permit Access-list:
+
+   RNAT(config)# access-list 10 permit 10.0.0.0 0.0.0.255  ---> 10.0.0.0 is the client-side network address, and 0.0.0.255 is the wildcard mask.
+
+3. Configure PAT:
+
+   RNAT(config)# ip nat inside source list 10 interface fastethernet 0/1 overload  ---> 0/1 is the local outside interface, and "overload" allows multiple clients to use the same public IP address.
+
+   *** Now, ping from PC to server and check the NAT translations:
+      RNAT# show ip nat translations
+      In the translations output, you can see inside global addresses ending with port numbers, e.g., 1:0, 1:2, 1:x, where "x" is the port number. These port numbers are assigned through PAT.
