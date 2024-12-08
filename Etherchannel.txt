@@ -1,0 +1,56 @@
+ETHERCHANNEL: It is used to avoid STP (Between two switches)
+
+Commands: LACP (These commands are for one switch connected to one VLAN only. If more VLANs are connected, improvise commands as one EtherChannel works in one VLAN only. For other VLANs, we need to set everything up from scratch again.)
+
+For SW1:
+
+1. To turn on Trunk mode (L2 Switch):
+   SW1(config)# interface range fastethernet 0/1-4  ---> for a range of all FastEthernet interfaces connected to other switches
+   SW1(config-if-range)# switchport mode trunk  ---> no need to configure trunk mode on the opposite switch, as this command will apply to both ends. 
+   However, if the opposite switch is connected to another switch, trunk mode must be enabled on that interface range as well.
+
+   FOR L3 SWITCH:
+   SW1(config-if-range)# switchport trunk encapsulation dot1q
+
+2. To group all links into one Virtual Link:
+   SW1(config-if-range)# channel-group 5 mode active  ---> '5' can be any number, but it should match the number used on the other switch for that particular EtherChannel group.
+   ---> Mode 'active' because one switch needs to actively send packets to the server or the other end, while the opposite switch interface needs to be passive for LACP.
+
+For SW2:
+
+1. Configure trunk mode on all interfaces connected to other switches:
+   SW2(config)# interface range fastethernet 0/1-4
+   SW2(config-if-range)# switchport mode trunk
+
+2. Group all links into one Virtual Link:
+   SW2(config-if-range)# channel-group 5 mode passive  ---> Here, '5' must be the same as the other switch's channel-group. The mode is passive for this switch.
+
+*** After these commands, STP will consider all links as one logical link (although it’s virtual only).
+
+To check the EtherChannel status:
+
+   SW1# show etherchannel summary
+   SW1# show etherchannel load-balance  ---> Same check for SW2.
+
+*** If more than one server or client is on either side, then for load balancing:
+   For the server side:
+     Command: SW2(config)# port-channel load-balance dst-mac  ---> Load balancing based on destination MAC address.
+   For the client side:
+     SW1(config)# etherchannel load-balance operational state (src-mac):
+     - NON-IP: Source MAC address
+     - IPv4: Source MAC address
+
+Commands: PAGP
+
+1. To turn on Trunk mode (L2 Switch):
+   SW1(config)# interface range fastethernet 0/1-4  ---> For a range of all FastEthernet interfaces connected to other switches.
+   SW1(config-if-range)# switchport mode trunk  ---> No need to configure trunk mode on the opposite switch, as this command will apply to both ends.
+   However, if the opposite switch is connected to another switch, trunk mode must be enabled on that interface range.
+
+   FOR L3 SWITCH:
+   SW1(config-if-range)# switchport trunk encapsulation dot1q
+
+2. To group all links into one Virtual Link:
+   SW1(config)# channel-group 5 mode desirable  ---> The mode is 'desirable' for SW1.
+   SW2(config)# channel-group 5 mode auto  ---> The mode is 'auto' for SW2. First configure trunk mode, then apply this command.
+
