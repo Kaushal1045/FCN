@@ -1,0 +1,56 @@
+PORT SECURITY (HUB): Extension of ACL
+
+A] Prevent Network Flooding (Dynamic MAC Learning with Port Security)
+
+Objective: Configure port security to allow only one device (MAC address) per port to prevent network flooding if more devices are connected.
+
+Commands:
+
+1. Enter the interface to enable port security:
+   SW1(config)# interface fastethernet 0/1
+
+2. Set the port to access mode (required for port security):
+   SW1(config-if)# switchport mode access
+   Note: The interface should belong to a VLAN for access mode to work.
+
+3. (Optional) Manually assign a specific MAC address for security:
+   SW1(config-if)# switchport port-security mac-address <mac-address>
+   If not used, the switch dynamically learns the MAC address of the connected device.
+
+4. Set the maximum number of MAC addresses allowed (in this case, 1):
+   SW1(config-if)# switchport port-security maximum 1
+
+5. Define the action to take if the security violation occurs:
+   SW1(config-if)# switchport port-security violation shutdown
+   - Shutdown: The port is disabled (default behavior).
+   - Restrict: The port continues to function but logs the violation.
+   - Protect: The port drops packets from violating MAC addresses without logging.
+
+Behavior:
+- If more than one device attempts to connect to the port (e.g., two MAC addresses), the port shuts down.
+- The port remains in an "error-disabled" state and must be manually re-enabled using:
+   SW1(config)# interface fastethernet 0/1
+   SW1(config-if)# shutdown
+   SW1(config-if)# no shutdown
+
+
+B] Prevent Communication Between Specific Devices (Protected Ports)
+
+Objective: Configure protected ports to block traffic between specific devices.
+
+Commands:
+
+1. Enter the interface of the switch connected to the first device (e.g., a laptop):
+   SW1(config)# interface fastethernet 0/2
+
+2. Configure the port as protected:
+   SW1(config-if)# switchport protected
+
+3. Enter the interface of the switch connected to the second device (e.g., a server):
+   SW1(config)# interface fastethernet 0/3
+
+4. Configure the port as protected:
+   SW1(config-if)# switchport protected
+
+Behavior:
+- Traffic between protected ports is blocked, but they can still communicate with other unprotected ports.
