@@ -1,0 +1,55 @@
+To CONNECT LAPTOP TO ROUTER FROM REMOTE LOCATION: Done by SSH and Telnet
+
+Commands:
+
+1. Set the hostname for the router:
+   R1(config)# hostname DC_router
+   (This renames the router to "DC_router.")
+
+2. Set a domain name:
+   DC_router(config)# ip domain-name example.com
+   (The domain name is required to generate RSA keys for SSH.)
+
+3. Generate RSA keys:
+   DC_router(config)# crypto key generate rsa
+   When prompted:
+   How many bits in the modulus [512]: 1024
+   (It is recommended to use 1024 or higher for stronger encryption.)
+
+4. Create a user with privilege level 15 (admin) and a secret password:
+   DC_router(config)# username admin privilege 15 secret 123
+   - privilege 15 grants full administrative access.
+   - secret ensures the password is stored in an encrypted form in the configuration file.
+
+5. Configure the virtual terminal (vty) lines for SSH login:
+   DC_router(config)# line vty 0 4
+   DC_router(config-line)# login local
+   - login local ensures the credentials from the local database (username and password) are used.
+
+6. Enable SSH for incoming connections:
+   DC_router(config-line)# transport input ssh
+
+7. Exit line configuration mode:
+   DC_router(config-line)# exit
+
+8. Set the SSH version to 2:
+   DC_router(config)# ip ssh version 2
+   (SSH version 2 is more secure and should always be used.)
+
+9. Limit authentication retries:
+   DC_router(config)# ip ssh authentication-retries 2
+   (This restricts users to 2 failed login attempts before being locked out.)
+
+Testing the Configuration:
+
+- Access the router from the PC using an SSH client (e.g., PuTTY):
+  1. Open the terminal or SSH client on the PC.
+  2. Enter the router's IP address and connect via SSH.
+  3. Enter the configured username (admin) and password (123).
+
+Notes:
+
+- The above configuration does not include enabling an IP address on the router interface. Ensure that an IP address is assigned and reachable for the SSH connection:
+  DC_router(config)# interface <interface_name>
+  DC_router(config-if)# ip address <ip_address> <subnet_mask>
+  DC_router(config-if)# no shutdown
