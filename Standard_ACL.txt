@@ -1,0 +1,60 @@
+Standard Access Control List (S-ACL):
+
+Purpose:
+- Acts like a firewall on the router interface.
+- Controls traffic entering (Ingress) or leaving (Egress) an interface.
+
+### Key Concepts:
+- **Ingress Interface**: Blocks or permits packets entering the router.
+- **Egress Interface**: Blocks or permits packets leaving the router.
+
+---
+
+### Configuration Steps:
+
+#### Step 1: Define the Standard ACL
+1. Enter Standard ACL configuration mode:
+   R2(config)# ip access-list standard 10
+   - ACL numbers for Standard ACL range from 1-99 (and 1300-1999 for extended ranges).
+
+2. Add deny and permit rules:
+   - Deny specific network traffic:
+     R2(config-std-nacl)# deny <network_address> <wildcard_mask>
+     Example:
+     R2(config-std-nacl)# deny 10.0.0.0 0.0.0.255
+
+   - Permit specific network traffic (required to allow other traffic):
+     R2(config-std-nacl)# permit any
+
+3. Verify the ACL configuration:
+   R2# show ip access-lists
+
+---
+
+#### Step 2: Apply the ACL to an Interface
+1. Select the router interface to apply the ACL:
+   R2(config)# interface fastethernet 0/0
+
+2. Apply the ACL in the desired direction:
+   - **Ingress (Inbound)**:
+     R2(config-if)# ip access-group 10 in
+   - **Egress (Outbound)**:
+     R2(config-if)# ip access-group 10 out
+
+---
+
+### Example Scenario:
+- Block traffic from the 10.0.0.0/24 network on ingress, while allowing all other traffic:
+  1. Define the ACL:
+     R2(config)# ip access-list standard 10
+     R2(config-std-nacl)# deny 10.0.0.0 0.0.0.255
+     R2(config-std-nacl)# permit any
+
+  2. Apply the ACL:
+     R2(config)# interface fastethernet 0/0
+     R2(config-if)# ip access-group 10 in
+
+---
+
+### Note:
+- In Enhanced Interior Gateway Routing Protocol (EIGRP), ensure that you permit all EIGRP network traffic; otherwise, neighbor relationships will fail, and the link will go down.
