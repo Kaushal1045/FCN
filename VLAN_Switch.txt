@@ -1,0 +1,136 @@
+VLAN and Switch (Layer 3):
+
+Commands:
+
+1. To see the MAC address table in a particular switch:
+   SW# show mac-address-table
+
+2. To get ARP on a PC:
+   arp -a
+
+3. To show VLANs:
+   SW# show vlan
+
+4. To Create VLAN:
+   SW1(config)# vlan ?
+   SW1(config)# vlan 10
+   SW1(config-vlan)# name <name>
+   SW1(config-vlan)# exit
+   SW1(config)# vlan 20
+   SW1(config-vlan)# name <name>
+   SW1(config-vlan)# exit
+   SW1(config)# vlan 30
+   SW1(config-vlan)# name <name>
+   SW1(config-vlan)# exit
+
+5. To add switch ports to a particular VLAN:
+   SW1(config)# interface range fastethernet <range>
+      (e.g., for ports 0/1-2 or 0/3-4)
+
+   SW1(config)# interface fastethernet 0/1 --> For a single port
+   SW1(config-if)# switchport access vlan 10
+   SW1(config-if)# switchport mode access
+
+   * Do this for every port and VLAN.
+
+   Access Mode: Devices in the same VLAN can communicate.
+   Trunk Mode: Used to connect the same VLAN across different switches.
+
+6. To enable trunk mode:
+   SW1(config)# interface fastethernet 0/1
+   SW1(config-if)# switchport trunk encapsulation dot1q --> For dot1q protocol
+   SW1(config-if)# switchport mode trunk
+
+   * Apply this to all ports connecting to other switches.
+
+7. To connect multiple VLANs (Layer 3 switches required):
+   a. Enable routing on the switch:
+      SW1(config)# ip routing
+
+   b. Assign gateway IP addresses for each VLAN:
+      SW1(config)# interface vlan 10
+      SW1(config-if)# ip address 10.0.0.1 255.255.255.0
+
+      SW1(config)# interface vlan 20
+      SW1(config-if)# ip address 20.0.0.1 255.255.255.0
+
+      SW1(config)# interface vlan 30
+      SW1(config-if)# ip address 30.0.0.1 255.255.255.0
+
+---
+
+VLAN Trunking Protocol (VTP):
+
+1. Turn on trunk mode for VTP:
+   VTP_server(config)# interface fastethernet 0/1
+   VTP_server(config-if)# switchport mode trunk
+
+   *** For Layer 3: Use "switchport trunk encapsulation dot1q."
+
+2. Check VTP status:
+   # show vtp status
+
+3. Set a common VTP domain name:
+   VTP_server(config)# vtp domain <domain_name>
+   (e.g., "cdac")
+
+4. Set a VTP password:
+   VTP_server(config)# vtp password <password>
+   (Ensure all devices use the same password.)
+
+5. Assign VTP modes:
+   VTP_server(config)# vtp mode server
+   VTP_client(config)# vtp mode client
+   VTP_transparent(config)# vtp mode transparent
+
+   *** VLANs can only be created on the VTP server.
+
+6. Add VLANs on the server:
+   VTP_server(config)# vlan 10
+   VTP_server(config-vlan)# name pc
+
+7. Check VLANs on clients:
+   VTP_client# show vlan
+   VTP_client# show vtp status
+
+---
+
+VLAN and Switch (Layer 2):
+
+* Add a router to one of the switches to create logical sub-interfaces for VLANs.
+* For Layer 2 switches, a router is required for inter-VLAN communication.
+
+Commands:
+
+1. Set VLAN:
+   (Same as Layer 3 commands above.)
+
+2. Set access mode:
+   (Same as Layer 3 commands above.)
+
+3. Enable trunk mode on Layer 2:
+   SW1(config)# interface fastethernet 0/1
+   SW1(config-if)# switchport mode trunk
+
+4. Enable trunk mode on the switch interface connected to the router:
+   SW1(config)# interface fastethernet 0/6
+   SW1(config-if)# switchport mode trunk
+
+5. Configure sub-interfaces on the router:
+   R1(config)# interface fastethernet 0/0
+   R1(config-if)# no shutdown
+
+   R1(config)# interface fastethernet 0/0.10
+   R1(config-subif)# encapsulation dot1q 10
+   R1(config-subif)# ip address 10.0.0.1 255.255.255.0
+
+   R1(config)# interface fastethernet 0/0.20
+   R1(config-subif)# encapsulation dot1q 20
+   R1(config-subif)# ip address 20.0.0.1 255.255.255.0
+
+   R1(config)# interface fastethernet 0/0.30
+   R1(config-subif)# encapsulation dot1q 30
+   R1(config-subif)# ip address 30.0.0.1 255.255.255.0
+
+6. Verify:
+   R1# show ip interface brief
