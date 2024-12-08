@@ -1,0 +1,43 @@
+Extended-Access Control List:
+
+	EX: Objective ping should work and web should not
+
+	On the basis of port no we will block
+
+	Step 1: To Remove SACL if Any is activated on router
+
+		R2(config)# no ip access-list standard 10
+		R2(config)# int fastethernet 0/0
+		R2(config)# no ip access-group 10 in
+
+	Now check if ping and web is working
+
+	Step 2: Now apply Ex-ACL and Permit ICMP
+
+		R2(config)# ip access-list extended 110 ----> here we have taken 110 but the range of this no is (100-199)
+		R2(config-ext-nacl)# permit ?
+		R2(config-ext-nacl)# permit icmp <source address> <wildcard mask> <destination address> <wildcard mask> eq <port no of protocol>
+		R2(config-ext-nacl)# permit icmp 10.0.0.0 0.0.0.255 30.0.0.0 0.0.0.255 ------> icmp bcauz icmp protocol is used for ping and icmp do not have any port no so no eq <port no>
+
+	Step 3: To block port no for TCP(Web Server)
+
+		R2(config-ext-nacl)# Deny tcp 10.0.0.0 0.0.0.255 30.0.0.0 0.0.0.255 eq 80 ----> 80 is port no of tcp
+
+		*** To block all port use "grt" then it will block all ports >80 -----> but never do it
+
+	Step 4: To block DNS(UDP)
+
+		R2(config-ext-nacl)# Deny udp 10.0.0.0 0.0.0.255 30.0.0.0 0.0.0.255 eq 53
+
+	Step 5: For Interface
+
+		R2(config)# int fastethernet 0/0
+		R2(config-if)# ip acces-group 110 in 
+
+		*** In Eigrp u must permit all eigrp networks otherwise the neighbors will be not be permitted and link will go down.
+
+		*** For Eigrp use R2(config-ext-nacl)#permit eigrp any any ----> means any(host) to any(destination)
+		
+	Step 6: now check if ping works and web is blocked
+		
+		U can do other practical on Ping is blocked and web and dns works i.e., UDP and TCP works
