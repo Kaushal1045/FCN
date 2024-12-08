@@ -1,0 +1,46 @@
+LEGACY NETWORKING: Access of Remote Router from Laptop with the help of Data Center SERVER (RADIUS SERVER)
+
+RADIUS: Remote Authentication Dial-In User Service
+
+AT RADIUS SERVER:
+
+1. Enable and configure AAA services on the RADIUS server:
+   - AAA stands for Authentication, Authorization, and Accounting.
+   
+2. Add the client (R1 router) to the RADIUS server and configure its IP (the IP of the incoming interface connected to the server/laptop) on the RADIUS server. Also, set a shared secret (password).
+   
+3. Create users on the RADIUS server:
+   - Create users `admin` and `cdac` with passwords for each.
+
+---
+
+AT R1 Router:
+
+1. Enable AAA on the router:
+
+   R1(config)# aaa new-model
+
+2. Configure the authentication method for login:
+
+   R1(config)# aaa authentication login cdac group radius  ---> Here, `cdac` is the name of the authentication method group. You can replace `cdac` with any custom name you prefer.
+
+3. Configure the RADIUS server on the router:
+
+   R1(config)# radius-server host 10.0.0.3 auth-port 1645 key 123  ---> 10.0.0.3 is the IP address of the RADIUS server, 1645 is the authentication port (often 1812 or 1645), and `123` is the shared secret (password) for the router to authenticate with the RADIUS server.
+
+---
+
+To configure access to the router via SSH/Telnet (using a virtual terminal line):
+
+4. Configure the VTY (virtual terminal) lines for access:
+
+   R1(config)# line vty 0 4  ---> This command allows up to 5 virtual terminal sessions (from 0 to 4).
+   R1(config-line)# login authentication cdac  ---> `cdac` refers to the name of the authentication method group you created in step 2.
+
+5. To access the router through Telnet (for SSH, the commands are different):
+
+   - Use a Telnet client (e.g., PuTTY, Terminal) to connect to R1's IP address.
+   - Enter the username and password for authentication.
+
+Note: If you want to use SSH for accessing the router, you need to enable SSH on the router with additional configurations like generating crypto keys and setting up an SSH server, which is different from the Telnet configuration.
+
